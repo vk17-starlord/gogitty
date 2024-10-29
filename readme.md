@@ -1,8 +1,8 @@
-Here’s a sample `README.md` for your Git-like CLI project in Go. It includes sections for a brief project overview, installation, usage, folder structure, and contribution guidelines.
 
----
 
 # GoGitty: A Git-Like Version Control System in Go
+
+Article - [Write yourself a git](https://wyag.thb.lt/)
 
 GoGitty is a simplified, Git-inspired version control system built from scratch in Go. This project serves as a learning tool to understand Git internals by re-implementing essential Git commands. By using the Cobra CLI framework, GoGitty provides a command-line interface that mimics the basic functionality of Git, such as initializing repositories, adding and committing changes, and viewing logs.
 
