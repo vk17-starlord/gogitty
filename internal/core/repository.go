@@ -1,16 +1,47 @@
 package core
 
 import (
+	"errors"
 	"fmt"
 	"gogitty/internal/common"
 	"gogitty/internal/config"
 	"os"
+	"path/filepath"
 )
 
 // Struct for storing Repository Object
 type Repository struct {
 	WorkTree string
 	GitDir   string
+}
+
+// RepoFind searches for the repository root starting from the given path.
+func RepoFind(path string, required bool) (*Repository, error) {
+	absPath, err := filepath.Abs(path)
+	if err != nil {
+		return nil, fmt.Errorf("could not determine absolute path: %w", err)
+	}
+
+	for {
+		// Check if .git directory exists in the current path
+		gitDir := filepath.Join(absPath, ".git")
+		if info, err := os.Stat(gitDir); err == nil && info.IsDir() {
+			return &Repository{WorkTree: absPath, GitDir: gitDir}, nil
+		}
+
+		// Move up one directory level
+		parent := filepath.Dir(absPath)
+		if parent == absPath {
+			// Reached the root
+			if required {
+				return nil, errors.New("no git directory found")
+			}
+			return nil, nil
+		}
+
+		// Set the new path to the parent
+		absPath = parent
+	}
 }
 
 func (repo Repository) InitRepository() error {
@@ -43,5 +74,5 @@ func (repo Repository) InitRepository() error {
 		return fmt.Errorf("error initializing config: %w", err) // Return the error
 	}
 
-	return nil // Indicate success
+	return nil
 }

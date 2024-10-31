@@ -51,3 +51,9 @@ func GetRepoDir(repo string, mkdir bool, path ...string) (string, error) {
 
 	return dirpath, nil
 }
+
+func CheckError(e error) {
+	if e != nil {
+		panic(e)
+	}
+}

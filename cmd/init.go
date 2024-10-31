@@ -11,6 +11,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	repo core.Repository // Declare a package-level variable for the repo
+)
+
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
