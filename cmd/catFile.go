@@ -1,27 +1,46 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
+	"compress/zlib"
 	"fmt"
+	"gogitty/internal/common"
+	"gogitty/internal/core"
+	"io"
+	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
 
 // catFileCmd represents the catFile command
 var catFileCmd = &cobra.Command{
-	Use:   "catFile",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "cat-file",
+	Short: "prints an existing git object to the standard output.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("catFile called")
+		// check if custom path is provided or get current working directory
+		var hash string
+		if len(args) > 0 {
+			hash = args[0]
+		} else {
+			return
+		}
+		dir, _ := os.Getwd()
+		currentrepository, _ := core.RepoFind(dir, true)
+		blobPath := fmt.Sprintf("%s/objects/%v/%v", currentrepository.GitDir, hash[0:2], hash[2:])
+
+		data, err := os.Open(blobPath)
+		common.CheckError(err)
+		r, err := zlib.NewReader(io.Reader(data))
+		if err != nil {
+			panic(err)
+		}
+		s, _ := io.ReadAll(r)
+		parts := strings.Split(string(s), "\x00")
+		fmt.Println(parts[1])
+
 	},
 }
 
