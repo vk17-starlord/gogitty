@@ -5,6 +5,8 @@ package cmd
 
 import (
 	"fmt"
+	"gogitty/internal/core"
+	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -15,7 +17,16 @@ var initCmd = &cobra.Command{
 	Short: "Init command is used for initializing using folder for version control and tracking files",
 	Long:  `Will create a .git hidden folder for version control`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Hello from init")
+
+		// Create the repository
+		repo := core.NewRepository()
+		if repo == nil {
+			log.Fatalf("Error creating repository")
+		}
+
+		repo.Init()
+		fmt.Printf("Repository created at: %s\n", repo.Gitdir)
+
 	},
 }
 
