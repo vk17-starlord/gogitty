@@ -2,9 +2,9 @@ package constants
 
 const (
 	// General App Constants
-	AppName       = "gogitty"
-	AppVersion    = "1.0.0"
-	GitFolder     = ".jit"
+	AppName    = "gogitty"
+	AppVersion = "1.0.0"
+	GitFolder  = ".jit"
 
 	// Error Messages
 	ErrRepoNotFound = "repository not found in the current directory"

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"gogitty/pkg/constants"
 	"os"
 	"path/filepath"
 )
@@ -24,20 +25,28 @@ func EnsureDir(path string) error {
 
 // WriteFile writes content to a file at the specified path, creating any necessary directories.
 func WriteFile(path string, content []byte) error {
+	// Debugging output
+	fmt.Println("Writing file to path:", path)
+	fmt.Println("Content length:", len(content))
+	fmt.Println("Content:", string(content))
+
 	// Ensure the directory for the file exists.
 	dir := filepath.Dir(path)
 	if err := EnsureDir(dir); err != nil {
 		return fmt.Errorf("failed to ensure directory for file '%s': %w", path, err)
 	}
 
-	// Create and write to the file.
-	file, err := os.Create(path)
+	// Create or open the file (file will be overwritten if it already exists).
+	file, err := os.OpenFile(path, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
-		return fmt.Errorf("failed to create file '%s': %w", path, err)
+		return fmt.Errorf("failed to open file '%s': %w", path, err)
 	}
 	defer file.Close()
 
-	if _, err = file.Write(content); err != nil {
+	// Write the content to the file.
+	n, err := file.Write(content)
+	fmt.Printf("Wrote %d bytes to file.\n", n) // Debugging output
+	if err != nil {
 		return fmt.Errorf("failed to write to file '%s': %w", path, err)
 	}
 	return nil
@@ -68,13 +77,12 @@ func RepoFind(path string, required bool) (string, error) {
 		fmt.Print("Error converting path to absolute path")
 		return "", err
 	}
-	if _, err := os.Stat(filepath.Join(absPath, ".git")); err != nil {
+
+	gitFolderPath := filepath.Join(absPath, constants.GitFolder)
+	if _, err := os.Stat(gitFolderPath); err != nil {
 		parent := filepath.Join(absPath, "..")
 
 		if parent == path {
-			// Bottom case
-			// filepath.Join("/", "..") == "/":
-			// If parent==path, then path is root.
 			if required {
 				return "", fmt.Errorf("no git directory")
 			} else {
@@ -83,9 +91,14 @@ func RepoFind(path string, required bool) (string, error) {
 		}
 
 	} else {
-		return path, nil
+		return gitFolderPath, nil
 	}
 
-	return absPath, nil
+	return gitFolderPath, nil
 }
 
+func Check(e error) {
+	if e != nil {
+		panic(e)
+	}
+}

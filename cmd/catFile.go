@@ -4,7 +4,9 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
+	"gogitty/internal/core"
+	"gogitty/pkg/utils"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -14,11 +16,20 @@ var catFileCmd = &cobra.Command{
 	Use:   "cat-file",
 	Short: "prints an existing git object to the standard output.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Hello from cat file")
+		// accept hash as argument
+		hash := args[0]
+		cwd, _ := os.Getwd()
+		repo, _ := utils.RepoFind(cwd, true)
+		// get the object
+		core.ObjectRead(repo, hash)
+
 	},
 }
 
 func init() {
+	// Define the "type" flag with available choices
+	catFileCmd.Flags().String("type", "", "The type of git object (blob, commit, tree, tag)")
+
 	rootCmd.AddCommand(catFileCmd)
 
 	// Here you will define your flags and configuration settings.

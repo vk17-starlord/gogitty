@@ -4,7 +4,9 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
+	"gogitty/internal/core"
+	"gogitty/pkg/utils"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -15,7 +17,28 @@ var hashObjectCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	Long:  `converts an existing file into a git object`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Hello from hashObject")
+		filepath := args[0]
+		content, err := os.ReadFile(filepath)
+		if err != nil {
+			panic(err)
+		}
+		// create a new git blob object
+		blob := core.GitBlob{}
+		blob.Init()
+		blob.BlobData = content
+
+		cwd, _ := os.Getwd()
+		repo, _ := utils.RepoFind(cwd, true)
+
+		// write the object to the git object store
+		hash, err := core.ObjectWrite(&blob, repo, true)
+
+		if err != nil {
+			panic(err)
+		}
+		// print the hash
+		println(hash)
+
 	},
 }
 
