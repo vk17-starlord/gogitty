@@ -17,7 +17,7 @@ GoGitty is a simplified, Git-inspired version control system built from scratch 
 
 ## Features
 
-GoGitty currently will supports the following Git-inspired commands:
+GoGitty currently will support the following Git-inspired commands:
 
 - **init**: Initialize a new repository
 - **add**: Stage files to be committed
