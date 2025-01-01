@@ -102,3 +102,24 @@ func Check(e error) {
 		panic(e)
 	}
 }
+
+func IsExecutable(filePath string) (bool, error) {
+	// Get file information
+	info, err := os.Stat(filePath)
+	if err != nil {
+		return false, err
+	}
+
+	// Check if it's a regular file and not a directory
+	if !info.Mode().IsRegular() {
+		return false, nil
+	}
+
+	// Check if the file has execute permissions
+	// Owner, group, or others can execute
+	if info.Mode()&0111 != 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
