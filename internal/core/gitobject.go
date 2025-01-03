@@ -181,9 +181,13 @@ func WriteTree() {
 	cwd, _ := os.Getwd()
 
 	rootTree := readFiles(cwd, cwd)
-
-	rootTree.PrintEntries()
-
+	repo, _ := utils.RepoFind(cwd, true)
+	_, treeHash, err := rootTree.Serialize(repo)
+	if err != nil {
+		fmt.Errorf("error serializing subtree: %s", err)
+	} else {
+		fmt.Print(treeHash)
+	}
 }
 
 // readFiles reads files and directories recursively and adds them to the tree

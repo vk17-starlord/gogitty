@@ -58,6 +58,7 @@ func (t *GitTree) PrintEntries() {
 func (t *GitTree) Serialize(repo string) ([]byte, string, error) {
 	var buffer bytes.Buffer
 
+	fmt.Println("Serializing tree object...")
 	// Serialize each tree entry
 	for _, entry := range t.Entries {
 		// Format: <file_mode> <file_name>\0<object_id>
@@ -70,6 +71,7 @@ func (t *GitTree) Serialize(repo string) ([]byte, string, error) {
 		buffer.Write(objectIDBytes) // Append the raw 20-byte object ID
 	}
 
+	fmt.Println("Tree object serialized successfully.")
 	// Prepare the tree object content
 	treeContent := buffer.Bytes()
 
@@ -91,6 +93,7 @@ func (t *GitTree) Serialize(repo string) ([]byte, string, error) {
 
 	os.WriteFile(Objectpath+"/"+hashHex[2:], TreeBuffer.Bytes(), 0644)
 
+	fmt.Println("Tree object written to the object database successfully.", hashHex)
 	return fullContent, hashHex, nil
 }
 

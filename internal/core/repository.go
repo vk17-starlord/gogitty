@@ -51,8 +51,10 @@ func (r *Repository) Init() {
 
 	// Files to create
 	files := map[string][]byte{
-		r.Gitdir + "/HEAD":        []byte("ref: refs/heads/master"),
-		r.Gitdir + "/config.yaml": nil, // Config will be written later
+		r.Gitdir + "/HEAD":              []byte("ref: refs/heads/master"),
+		r.Gitdir + "/config.yaml":       nil, // Config will be written later
+		r.Gitdir + "/index":             []byte("HEADER:\n  Version: 2\n  Number of entries: 2"),
+		r.Gitdir + "/refs/heads/master": nil,
 	}
 
 	// Create files in a loop

@@ -4,7 +4,7 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
+	"gogitty/internal/core"
 
 	"github.com/spf13/cobra"
 )
@@ -20,7 +20,17 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("commit called")
+		gitIndex := &core.GitIndex{}
+		gitIndex.Init()
+		// Step 1: Read the index file
+		gitIndex.Deserialize()
+
+		// Step 2: Read the HEAD file
+		head := &core.GitHead{}
+		head.Init()
+
+		// If the commit hash was found, create the parent commit object
+
 	},
 }
 
