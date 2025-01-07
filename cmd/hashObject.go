@@ -1,27 +1,44 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
-	"fmt"
+	"gogitty/internal/core"
+	"gogitty/pkg/utils"
+	"os"
 
 	"github.com/spf13/cobra"
 )
 
 // hashObjectCmd represents the hashObject command
 var hashObjectCmd = &cobra.Command{
-	Use:   "hashObject",
+	Use:   "hash",
 	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long:  `converts an existing file into a git object`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("hashObject called")
+		filepath := args[0]
+		content, err := os.ReadFile(filepath)
+		if err != nil {
+			panic(err)
+		}
+		// create a new git blob object
+		blob := core.GitBlob{}
+		blob.Init()
+		blob.BlobData = content
+
+		cwd, _ := os.Getwd()
+		repo, _ := utils.RepoFind(cwd, true)
+
+		// write the object to the git object store
+		hash, err := core.ObjectWrite(&blob, repo, true)
+
+		if err != nil {
+			panic(err)
+		}
+		// print the hash
+		println(hash)
+
 	},
 }
 

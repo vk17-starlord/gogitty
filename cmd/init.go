@@ -1,11 +1,12 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
+	"gogitty/internal/core"
+	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -13,15 +14,19 @@ import (
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Init command is used for initializing using folder for version control and tracking files",
+	Long:  `Will create a .git hidden folder for version control`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("init called")
+
+		// Create the repository
+		repo := core.NewRepository()
+		if repo == nil {
+			log.Fatalf("Error creating repository")
+		}
+
+		repo.Init()
+		fmt.Printf("Repository created at: %s\n", repo.Gitdir)
+
 	},
 }
 

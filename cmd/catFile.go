@@ -1,31 +1,35 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
-	"fmt"
+	"gogitty/internal/core"
+	"gogitty/pkg/utils"
+	"os"
 
 	"github.com/spf13/cobra"
 )
 
 // catFileCmd represents the catFile command
 var catFileCmd = &cobra.Command{
-	Use:   "catFile",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "cat-file",
+	Short: "prints an existing git object to the standard output.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("catFile called")
+		// accept hash as argument
+		hash := args[0]
+		cwd, _ := os.Getwd()
+		repo, _ := utils.RepoFind(cwd, true)
+		// get the object
+		core.ObjectRead(repo, hash)
+
 	},
 }
 
 func init() {
+	// Define the "type" flag with available choices
+	catFileCmd.Flags().String("type", "", "The type of git object (blob, commit, tree, tag)")
+
 	rootCmd.AddCommand(catFileCmd)
 
 	// Here you will define your flags and configuration settings.
