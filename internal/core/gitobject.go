@@ -121,7 +121,7 @@ func ReadTree(repo string, sha string) {
 	y := bytes.Index(rawContent, []byte("\x00"))
 	contentSize := string(rawContent[SpaceIndex:y])
 	contentSize = strings.TrimSpace(contentSize)
-
+	
 	// extract the rawContent of the object
 	Actualcontent := rawContent[y+1:]
 

@@ -20,6 +20,48 @@ func (gh *GitHead) Init() {
 	gh.Hash = ""
 }
 
+func (gh *GitHead) AddLatestCommitToHead(hash string) {
+	// Get the current working directory
+	cwd, _ := os.Getwd()
+
+	// Find the repository
+	repo, err := utils.RepoFind(cwd, true)
+	if err != nil {
+		fmt.Println("Error finding repository:", err)
+		return
+	}
+
+	// Open the .git/HEAD file
+	headFilePath := filepath.Join(repo, "HEAD")
+	file, err := os.Open(headFilePath)
+	if err != nil {
+		fmt.Println("Error opening HEAD file:", err)
+		return
+	}
+
+	defer file.Close()
+
+	// Read the HEAD file content
+	var refLine string
+	_, err = fmt.Fscanf(file, "ref: %s\n", &refLine)
+	if err != nil {
+		fmt.Println("Error reading HEAD file:", err)
+		return
+	}
+
+	if strings.HasPrefix(refLine, "refs/heads/") {
+		branchName := strings.TrimPrefix(refLine, "refs/heads/")
+		// Look for the commit hash under the refs directory
+		refFilePath := filepath.Join(repo, "refs", "heads", branchName)
+		err := os.WriteFile(refFilePath, []byte(hash), 0644)
+		if err != nil {
+			fmt.Println("Error writing commit hash to head file:", err)
+			return
+		}
+	}
+
+}
+
 // GetLatestCommitHash fetches the latest commit hash by reading the HEAD file and checking the refs directory
 func (gh *GitHead) GetLatestCommitHash() (string, bool) {
 	// Get the current working directory

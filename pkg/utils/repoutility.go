@@ -5,6 +5,7 @@ import (
 	"gogitty/pkg/constants"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 // RepoPath constructs a path within the repository by joining the base repo path with additional elements.
@@ -122,4 +123,29 @@ func IsExecutable(filePath string) (bool, error) {
 	}
 
 	return false, nil
+}
+
+// GetTimestampAndOffset returns the current Unix timestamp and timezone offset in "+hhmm" format.
+func GetTimestampAndOffset() (int64, string) {
+	// Get the current time
+	now := time.Now()
+
+	// Get the Unix timestamp
+	unixTimestamp := now.Unix()
+
+	// Get the timezone offset in seconds
+	_, offsetSeconds := now.Zone()
+	offsetHours := offsetSeconds / 3600
+	offsetMinutes := (offsetSeconds % 3600) / 60
+
+	// Determine the sign and format the offset
+	sign := "+"
+	if offsetSeconds < 0 {
+		sign = "-"
+		offsetHours = -offsetHours
+		offsetMinutes = -offsetMinutes
+	}
+	timezoneOffset := fmt.Sprintf("%s%02d%02d", sign, offsetHours, offsetMinutes)
+
+	return unixTimestamp, timezoneOffset
 }
